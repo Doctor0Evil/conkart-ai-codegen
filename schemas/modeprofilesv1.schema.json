@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://conkart.ai/schemas/modeprofilesv1.schema.json",
+  "title": "ConkartModeProfileV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "mapid", "schemaversion", "modes"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Semantic version for this mode profile set (e.g., 1.0.0)."
+    },
+    "mapid": {
+      "type": "string",
+      "description": "Map identifier this profile set applies to (e.g., 01MultiplayerBeachDead)."
+    },
+    "schemaversion": {
+      "type": "string",
+      "description": "Schema version string (e.g., modeprofilesv1.0.0)."
+    },
+    "modes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "displayname", "enabledzones", "enabledspawnroletags", "enabledobjectiveroletags", "enabledhazardroletags", "lightingprofile"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "Machine‑readable mode identifier (e.g., BeachFrenchiesDay)."
+          },
+          "displayname": {
+            "type": "string",
+            "description": "Human‑readable name shown in UI."
+          },
+          "enabledzones": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Zone tags that are active in this mode (e.g., beach, valley, casualties_dept)."
+          },
+          "enabledspawnroletags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Spawn role_tags that are active (e.g., attackerspawnband, defenderspawnband)."
+          },
+          "enabledobjectiveroletags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Objective role_tags that are active (e.g., fence1, gas_trigger)."
+          },
+          "enabledhazardroletags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Hazard role_tags that are active (e.g., instant_win_hazard)."
+          },
+          "lightingprofile": {
+            "type": "string",
+            "enum": ["BeachDay", "BeachNightStealth", "WarOvercast", "InteriorDim"],
+            "description": "Lighting/post‑process preset key for engine builders."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional designer notes about this mode."
+          }
+        }
+      }
+    }
+  }
+}
