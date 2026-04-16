@@ -1,0 +1,34 @@
+# Filename: conkart_mode_policy.aln
+# Destination: policies/conkart_mode_policy.aln
+# ALN v1.0 | Mode Profile Consistency Policy for Conkart
+
+[mode_profile_schema]
+required_fields = ["version", "mapid", "schemaversion", "modes"]
+mode_entry_required = ["id", "displayname", "enabledzones", "enabledspawnroletags", "enabledobjectiveroletags", "enabledhazardroletags", "lightingprofile"]
+mode_id_pattern = "^[A-Za-z0-9_-]+$"
+lighting_profile_enum = ["BeachDay", "BeachNightStealth", "WarOvercast", "InteriorDim"]
+
+[zone_tag_vocabulary]
+allowed_zones = ["shc_base", "valley", "beach", "bunker_exterior", "assault_corridor", "tower", "casualties_dept"]
+allowed_spawn_tags = ["attackerspawnband", "attackerfallbackband1", "attackerfallbackband2", "defenderspawnband", "shc_base", "defenders_interior"]
+allowed_objective_tags = ["fence1", "fence2", "fence3", "bunkerdoor", "objectivezone_escape", "gas_trigger", "totalwar_objective"]
+allowed_hazard_tags = ["instant_win_hazard", "valley_hazard_source"]
+
+[ai_generation_rules]
+prompt_style = "technical_conkart"
+output_format = "json"
+required_fields = ["ModeId", "DisplayName", "EnabledZones", "LightingProfile"]
+forbidden_terms = ["class_based", "xp_system", "loadout_customization"]
+validation_hooks = ["conkart_validate_mode_profile", "zone_tag_vocabulary_check"]
+
+[consistency_invariants]
+mode_id.uniqueness = "per_mapid"
+zone_tag.subset = "must_exist_in_grid_role_tags"
+spawn_tag.subset = "must_exist_in_entities_role_tags"
+lighting_profile.valid = "must_be_in_enum"
+
+[ai_chat_context]
+system_role = "Conkart Mode Profile Generator"
+instruction_template = "Generate a valid ModeProfileEntry for map {mapid}. Adhere to zone_tag_vocabulary and lighting_profile_enum. Output JSON matching conkart_mode_policy.aln > [ai_generation_rules]."
+fallback_policy = "reject_and_log"
+confidence_threshold = 0.90
