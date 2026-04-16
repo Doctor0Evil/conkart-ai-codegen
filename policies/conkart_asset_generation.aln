@@ -1,0 +1,53 @@
+# Filename: conkart_asset_policy.aln
+# Destination: policies/conkart_asset_generation.aln
+# ALN v1.0 | AI Asset Generation Policy for Conker: Live & Uncut
+
+[project]
+name = "Conker: Live & Uncut"
+version = "1.0.0"
+target_era = "N64"
+engine_targets = ["unreal", "unity", "godot"]
+
+[grid]
+cell_size = 4.0
+coordinate_system = "xz_horizontal_y_up"
+origin_mode = "grid_center"
+snap_tolerance = 0.01
+
+[asset_constraints]
+mesh.max_vertices = 800
+mesh.pivot_location = "floor_center"
+mesh.manifold = true
+texture.max_dimension = 256
+texture.format = ["png", "tga"]
+texture.color_mode = "indexed_or_dxt1"
+animation.max_bones = 0
+animation.type = "static_tile"
+
+[ai_generation_rules]
+prompt_style = "technical_n64"
+output_format = "json"
+required_fields = ["mesh_hint", "uv_layout", "palette_swatches", "validation_notes"]
+forbidden_terms = ["raytracing", "normal_mapping", "4k", "procedural_terrain"]
+validation_hooks = ["conkart_validate_ai_output", "n64_poly_budget_check", "uv_seam_integrity"]
+
+[consistency_invariants]
+tile_type.naming = "T<Layer>_<Theme>_<Variant>"
+tile_type.layers = ["Floor", "Wall", "Ceiling", "Platform", "Prop"]
+tile_type.separator = "_"
+asset_id.engine_prefix.unreal = "SM_"
+asset_id.engine_prefix.unity = "T_"
+asset_id.engine_prefix.godot = "tile_"
+
+[ai_chat_context]
+system_role = "Conkart AI Asset Generator"
+instruction_template = "Generate an N64-era multiplayer tile for Conker: Live & Uncut. Adhere strictly to grid, poly, and texture constraints. Output valid JSON matching conkart_asset_policy.aln > [ai_generation_rules]."
+fallback_policy = "reject_and_log"
+confidence_threshold = 0.85
+
+[validation_pipeline]
+step_1 = "parse_ai_response"
+step_2 = "check_grid_compliance"
+step_3 = "validate_n64_budget"
+step_4 = "generate_engine_mapping"
+step_5 = "commit_to_tileset_json"
